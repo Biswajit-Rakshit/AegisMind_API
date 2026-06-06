@@ -5,3 +5,9 @@ class IsEmployee(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated and request.user.role == 'employee'
+    
+class IsHR(permissions.BasePermission):
+    '''Custom permission to allow only HR users to access certain views'''
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and request.user.role == 'hr'

@@ -11,7 +11,6 @@ class UserListCreateView(generics.ListCreateAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     '''API view to retrieve, update, or delete a user'''
@@ -19,9 +18,11 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAdminUser]
 
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         '''Return the queryset for the user detail view'''
 
-        return User.objects.filter(username=self.kwargs['pk'])
+        return User.objects.filter(username=self.kwargs['username'])
+    
+    lookup_field = 'username'
+    lookup_url_kwarg = 'username'

@@ -6,9 +6,12 @@ from django.db import models
 
 from surveys.models import SurveyResponse
 from accounts.models import Department
+from accounts.api.permissions import IsHR
 
 class DepartmentAnalyticsAPIView(APIView):
     '''API view for analytics data'''
+
+    permission_classes = [IsHR]
 
     def get(self, request, department_name):
         '''Handle GET request for analytics data'''
@@ -34,6 +37,8 @@ class DepartmentAnalyticsAPIView(APIView):
     
 class OverallAnalyticsAPIView(APIView):
     '''API view for overall analytics data'''
+
+    permission_classes = [IsHR]
 
     def get(self, request):
 
