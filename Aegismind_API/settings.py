@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'analytics',
     'surveys',
     'rest_framework_simplejwt',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -145,10 +146,21 @@ REST_FRAMEWORK = {
     ],
     # 'DEFAULT_RENDERER_CLASSES' : (
 	# 'rest_framework.renderers.JSONRenderer',
-	# ) 
+	# ),
+    'DEFAULT_THROTTLE_RATES': {
+        'survey_submission': '1/604800',
+    },
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-# SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-# }
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'AegidMind API',
+    'DESCRIPTION': 'API documentation for AegidMind application.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}

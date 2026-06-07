@@ -131,3 +131,21 @@ class SurveyResponseAPITests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_tokens['admin_user'])
         response = self.client.post(url, self.survey_response_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_survey_submission_more_than_once_per_week(self):
+        '''Test that survey submission is throttled after one submission per week'''
+
+        url = reverse('survey-submit')
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_tokens['employee'])
+        survey_response_data = {
+            'user_id': self.employee.id,
+            'department_id': self.department.id,
+            'stress_score': 5,
+            'workload_score': 6,
+            'mood_score': 7,
+            'burnout_score': 4
+        }
+        response1 = self.client.post(url, survey_response_data, format='json')
+        self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
+        response2 = self.client.post(url, survey_response_data, format='json')
+        self.assertEqual(response2.status_code, status.HTTP_429_TOO_MANY_REQUESTS)

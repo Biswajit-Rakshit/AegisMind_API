@@ -1,0 +1,465 @@
+openapi: 3.0.3
+info:
+  title: AegidMind API
+  version: 1.0.0
+  description: API documentation for AegidMind application.
+paths:
+  /accounts/api/token/:
+    post:
+      operationId: accounts_api_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /accounts/api/token/refresh/:
+    post:
+      operationId: accounts_api_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /accounts/users/:
+    get:
+      operationId: accounts_users_list
+      description: API view to list and create users
+      tags:
+      - accounts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+          description: ''
+    post:
+      operationId: accounts_users_create
+      description: API view to list and create users
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /accounts/users/{username}/:
+    get:
+      operationId: accounts_users_retrieve
+      description: API view to retrieve, update, or delete a user
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - accounts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: accounts_users_update
+      description: API view to retrieve, update, or delete a user
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: accounts_users_partial_update
+      description: API view to retrieve, update, or delete a user
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: accounts_users_destroy
+      description: API view to retrieve, update, or delete a user
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        required: true
+      tags:
+      - accounts
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /analytics/{department_name}/:
+    get:
+      operationId: analytics_retrieve
+      description: Retrieves aggregated survey scores for a specific department. Requires
+        a minimum of 5 responses for privacy.
+      parameters:
+      - in: path
+        name: department_name
+        schema:
+          type: string
+        required: true
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartmentAnalyticsResponse'
+          description: ''
+        '403':
+          description: Not enough data for analytics (less than 5 responses).
+        '404':
+          description: Department not found.
+  /analytics/all/:
+    get:
+      operationId: analytics_all_retrieve
+      description: Retrieves aggregated survey scores across all departments. Requires
+        a minimum of 5 responses for privacy.
+      tags:
+      - analytics
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OverallAnalyticsResponse'
+          description: ''
+        '403':
+          description: Not enough data for analytics (less than 5 responses).
+  /surveys/survey-submit/:
+    post:
+      operationId: surveys_survey_submit_create
+      description: APIView for creating survey responses
+      tags:
+      - surveys
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SurveyResponse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SurveyResponse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SurveyResponse'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurveyResponse'
+          description: ''
+components:
+  schemas:
+    DepartmentAnalyticsResponse:
+      type: object
+      description: Serializer for analytics data
+      properties:
+        department:
+          type: string
+        stress_score:
+          type: number
+          format: double
+        workload_score:
+          type: number
+          format: double
+        mood_score:
+          type: number
+          format: double
+        burnout_score:
+          type: number
+          format: double
+      required:
+      - burnout_score
+      - department
+      - mood_score
+      - stress_score
+      - workload_score
+    OverallAnalyticsResponse:
+      type: object
+      description: Serializer for overall analytics data
+      properties:
+        stress_score:
+          type: number
+          format: double
+        workload_score:
+          type: number
+          format: double
+        mood_score:
+          type: number
+          format: double
+        burnout_score:
+          type: number
+          format: double
+      required:
+      - burnout_score
+      - mood_score
+      - stress_score
+      - workload_score
+    PatchedUser:
+      type: object
+      description: Serializer for the User model
+      properties:
+        username:
+          type: string
+          nullable: true
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          readOnly: true
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        department:
+          type: integer
+          writeOnly: true
+          nullable: true
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        department_name:
+          type: string
+          readOnly: true
+    RoleEnum:
+      enum:
+      - employee
+      - hr
+      - admin
+      type: string
+      description: |-
+        * `employee` - Employee
+        * `hr` - HR
+        * `admin` - Admin
+    SurveyResponse:
+      type: object
+      description: Serializer for the SurveyResponse model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+        department_id:
+          type: integer
+          readOnly: true
+          nullable: true
+        stress_score:
+          type: integer
+          maximum: 10
+          minimum: 1
+        workload_score:
+          type: integer
+          maximum: 10
+          minimum: 1
+        mood_score:
+          type: integer
+          maximum: 10
+          minimum: 1
+        burnout_score:
+          type: integer
+          maximum: 10
+          minimum: 1
+        submitted_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - burnout_score
+      - department_id
+      - id
+      - mood_score
+      - stress_score
+      - submitted_at
+      - user_id
+      - workload_score
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    User:
+      type: object
+      description: Serializer for the User model
+      properties:
+        username:
+          type: string
+          nullable: true
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          readOnly: true
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        department:
+          type: integer
+          writeOnly: true
+          nullable: true
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        department_name:
+          type: string
+          readOnly: true
+      required:
+      - department_name
+      - email
+      - password
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -22,12 +22,30 @@ The project is designed with enterprise-grade principles in mind, focusing on da
 * Survey responses cannot be retrieved directly through public APIs
 * Business rules enforced through API permissions
 
-### Privacy Protection
+### Privacy & Analytics
 
 * Department-level analytics
 * 5-Anonymity (k-anonymity) enforcement
 * Analytics are displayed only when a department has at least 5 survey responses
-* Prevents identification of individual employee responses
+* Privacy-first data aggregation
+
+### API Security
+
+* Custom DRF Throttling
+* One survey submission per employee per week
+* Access restrictions based on user roles
+
+### Testing
+
+* Unit tests for Accounts APIs
+* Unit tests for Survey APIs
+* Unit tests for Analytics APIs
+* Business-rule validation testing
+
+### API Documentation
+
+* Interactive Swagger/OpenAPI Documentation
+* Auto-generated API schemas using drf-spectacular
 
 ### Enterprise-Oriented Design
 
@@ -35,14 +53,6 @@ The project is designed with enterprise-grade principles in mind, focusing on da
 * Environment-based configuration
 * Separation of employee and administrator responsibilities
 * Secure API design
-
-### Planned Features
-
-* API Throttling / Rate Limiting
-* Automated Testing
-* Enhanced Analytics Dashboard APIs
-* Docker Support
-* Deployment Configuration
 
 ---
 
@@ -53,6 +63,7 @@ The project is designed with enterprise-grade principles in mind, focusing on da
 * Django REST Framework (DRF)
 * JWT Authentication
 * PostgreSQL
+* drf-spectacular (Swagger/OpenAPI)
 * Git & GitHub
 
 ---
@@ -73,25 +84,22 @@ AegisMind_API/
 
 ---
 
-## API Highlights
+## Key Business Rules
 
 ### User Management
 
-* Admins can create employee accounts
-* Authentication using JWT tokens
-* Custom user model implementation
+* Employees cannot self-register
+* Only administrators can create employee accounts
 
-### Survey APIs
+### Survey Submission
 
-* Submit employee sentiment surveys
-* Controlled access based on user roles
-* Privacy-first response handling
+* Employees can submit only one survey per week
+* Survey responses remain anonymous
 
-### Analytics APIs
+### Analytics Privacy
 
-* Organization-level analytics
-* Department-specific analytics
-* 5-Anonymity validation before data exposure
+* Analytics are displayed only when a minimum of 5 responses exist within a group
+* Prevents individual employee identification
 
 ---
 
@@ -167,6 +175,42 @@ python manage.py runserver
 
 ---
 
+## Testing
+
+The project includes automated test coverage for:
+
+* User Registration
+* Authentication
+* Permissions
+* Survey Submission
+* Analytics APIs
+* Privacy Enforcement Rules
+* Throttling Rules
+
+Run tests:
+
+```bash
+python manage.py test
+```
+
+---
+
+## API Documentation
+
+Swagger UI is available after running the server:
+
+```text
+/api/schema/swagger-ui/
+```
+
+OpenAPI schema:
+
+```text
+/api/schema/
+```
+
+---
+
 ## Design Decisions
 
 ### Why k-Anonymity?
@@ -183,13 +227,33 @@ The platform is designed to collect anonymous feedback. Allowing unrestricted ac
 
 ---
 
+## Current Status
+
+✅ Authentication Implemented
+
+✅ Role-Based Access Control
+
+✅ Survey Management APIs
+
+✅ K-Anonymity Analytics
+
+✅ Weekly Submission Restriction
+
+✅ Automated Testing
+
+✅ Swagger Documentation
+
+🚧 Weekly Analytics Filtering (In Progress)
+
+---
+
 ## Future Improvements
 
-* Comprehensive unit tests
-* API integration tests
-* Docker containerization
-* CI/CD pipeline
-* AWS deployment
+* Weekly Analytics Filtering
+* Docker Support
+* AWS Deployment
+* CI/CD Pipeline
+* Advanced Reporting & Dashboards
 
 ---
 
