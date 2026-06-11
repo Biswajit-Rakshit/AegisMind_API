@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 
-from surveys.api.throttling import SurveySubmissionThrottle
+from surveys.api.throttling import OncePerCalendarWeekThrottle
 from surveys.models import SurveyResponse
 from surveys.api.serializers import SurveyResponseSerializer
 from accounts.api.permissions import IsEmployee
@@ -9,7 +9,7 @@ from accounts.api.permissions import IsEmployee
 class SurveyResponseCreateView(generics.CreateAPIView):
     '''APIView for creating survey responses'''
 
-    throttle_classes = [SurveySubmissionThrottle]
+    throttle_classes = [OncePerCalendarWeekThrottle]
 
     permission_classes = [IsEmployee]
 

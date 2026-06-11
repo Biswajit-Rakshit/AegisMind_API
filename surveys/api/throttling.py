@@ -1,22 +1,23 @@
-from rest_framework.throttling import UserRateThrottle
+from datetime import timedelta
+from django.utils import timezone
+from rest_framework.throttling import BaseThrottle
 
-class SurveySubmissionThrottle(UserRateThrottle):
-    '''Custom throttle class for survey submissions allowing raw seconds'''
+from surveys.models import SurveyResponse
 
-    scope = 'survey_submission'
+class OncePerCalendarWeekThrottle(BaseThrottle):
+    def allow_request(self, request, view):
 
-    def parse_rate(self, rate):
-        """
-        Overrides DRF's standard parsing to allow rates like '1/604800'
-        where the denominator is just the total number of seconds.
-        """
-        if rate is None:
-            return (None, None)
-        
-        num_requests, period = rate.split('/')
-        num_requests = int(num_requests)
-        
-        if period.isdigit():
-            return (num_requests, int(period))
+        if not request.user or not request.user.is_authenticated:
+            return True
 
-        return super().parse_rate(rate)
+        today = timezone.now().date()
+        start_of_week = today - timedelta(days=today.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
+
+        already_submitted = SurveyResponse.objects.filter(
+            user_id=request.user,
+            submitted_at__date__gte=start_of_week,
+            submitted_at__date__lte=end_of_week
+        ).exists()
+
+        return not already_submitted

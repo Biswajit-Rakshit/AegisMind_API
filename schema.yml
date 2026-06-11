@@ -212,6 +212,20 @@ paths:
         schema:
           type: string
         required: true
+      - in: query
+        name: end_date
+        schema:
+          type: string
+          format: date
+        description: Filter responses up to this date (YYYY-MM-DD). Defaults to the
+          end of the current week if both dates are missing.
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+        description: Filter responses from this date (YYYY-MM-DD). Defaults to the
+          start of the current week if both dates are missing.
       tags:
       - analytics
       security:
@@ -232,6 +246,21 @@ paths:
       operationId: analytics_all_retrieve
       description: Retrieves aggregated survey scores across all departments. Requires
         a minimum of 5 responses for privacy.
+      parameters:
+      - in: query
+        name: end_date
+        schema:
+          type: string
+          format: date
+        description: Filter responses up to this date (YYYY-MM-DD). Defaults to the
+          end of the current week if both dates are missing.
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+        description: Filter responses from this date (YYYY-MM-DD). Defaults to the
+          start of the current week if both dates are missing.
       tags:
       - analytics
       security:
@@ -280,6 +309,14 @@ components:
       properties:
         department:
           type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        response_count:
+          type: integer
         stress_score:
           type: number
           format: double
@@ -295,13 +332,26 @@ components:
       required:
       - burnout_score
       - department
+      - end_date
       - mood_score
+      - response_count
+      - start_date
       - stress_score
       - workload_score
     OverallAnalyticsResponse:
       type: object
       description: Serializer for overall analytics data
       properties:
+        department:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        response_count:
+          type: integer
         stress_score:
           type: number
           format: double
@@ -316,7 +366,11 @@ components:
           format: double
       required:
       - burnout_score
+      - department
+      - end_date
       - mood_score
+      - response_count
+      - start_date
       - stress_score
       - workload_score
     PatchedUser:

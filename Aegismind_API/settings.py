@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'surveys',
     'rest_framework_simplejwt',
     'drf_spectacular',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -141,15 +142,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
     # 'DEFAULT_RENDERER_CLASSES' : (
 	# 'rest_framework.renderers.JSONRenderer',
 	# ),
-    'DEFAULT_THROTTLE_RATES': {
-        'survey_submission': '1/604800',
-    },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 

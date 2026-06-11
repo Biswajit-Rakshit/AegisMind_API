@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils import timezone
+from datetime import timedelta
 from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -92,10 +94,17 @@ class AnalyticsAPITests(APITestCase):
     def test_get_department_analytics_hr_user(self):
         '''Test that HR user can access department analytics data'''
 
+        today = timezone.now().date()
+
+        start_of_week = today - timedelta(days=today.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
+
         url = reverse('department-analytics', args=[self.eng_department.name])
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_tokens['hr_user'])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['start_date'], start_of_week)
+        self.assertEqual(response.data['end_date'], end_of_week)
         self.assertIn('avg_stress_score', response.data)
         self.assertIn('avg_workload_score', response.data)
         self.assertIn('avg_mood_score', response.data)
@@ -151,3 +160,21 @@ class AnalyticsAPITests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_tokens['admin_user'])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_department_analytics_hr_user_with_filter(self):
+        '''Test that HR user can access department analytics data with custom date filter'''
+
+        start_date = '2026-05-30'
+        end_date = '2026-06-30'
+
+        filter_params = {
+            'start_date': start_date,
+            'end_date': end_date
+        }
+
+        url = reverse('department-analytics', args=[self.eng_department.name])
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.user_tokens['hr_user'])
+        response = self.client.get(url, data=filter_params)
+        self.assertIn(response.status_code, [status.HTTP_200_OK, status.HTTP_403_FORBIDDEN])
+        self.assertEqual(str(response.data['start_date']), start_date)
+        self.assertEqual(str(response.data['end_date']), end_date)

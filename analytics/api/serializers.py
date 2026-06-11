@@ -4,6 +4,8 @@ class DepartmentAnalyticsResponseSerializer(serializers.Serializer):
     '''Serializer for analytics data'''
 
     department = serializers.CharField(source='department_id__name')
+    start_date = serializers.DateField()
+    end_date = serializers.DateField()
     response_count = serializers.IntegerField()
     stress_score = serializers.FloatField()
     workload_score = serializers.FloatField()
@@ -14,6 +16,8 @@ class OverallAnalyticsResponseSerializer(serializers.Serializer):
     '''Serializer for overall analytics data'''
 
     department = serializers.CharField(source='department__name')
+    start_date = serializers.DateField() 
+    end_date = serializers.DateField()
     response_count = serializers.IntegerField()
     stress_score = serializers.FloatField()
     workload_score = serializers.FloatField()
